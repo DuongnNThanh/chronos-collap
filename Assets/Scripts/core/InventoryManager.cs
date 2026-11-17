@@ -117,15 +117,39 @@ public class InventoryManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(selectedItemID)) return;
 
-        // Xóa item có ID == selectedItemID khỏi danh sách túi đồ của bạn và cập nhật lại UI
-        // (Gọi lại hàm cập nhật slot UI hiện có trong InventoryManager của bạn tại đây)
+        int index = currentSelectedIndex;
         DeselectAll();
+        ClearSlot(index);
     }
 
 // 3. Làm trống toàn bộ túi đồ khi chuyển sang màn chơi mới
     public void ClearAllItems()
     {
-        // Xóa sạch danh sách item hiện tại và reset toàn bộ ô slot về trống
         DeselectAll();
+        if (slotItemIDs == null) return;
+        for (int i = 0; i < slotItemIDs.Length; i++)
+        {
+            ClearSlot(i);
+        }
+    }
+
+    // 4. Kiểm tra trong túi có vật phẩm này không (không cần đang cầm)
+    public bool HasItem(string itemID)
+    {
+        if (string.IsNullOrEmpty(itemID) || slotItemIDs == null) return false;
+        return System.Array.IndexOf(slotItemIDs, itemID) >= 0;
+    }
+
+    // Làm trống 1 ô: xóa ID và ẩn icon
+    private void ClearSlot(int index)
+    {
+        if (slotItemIDs == null || index < 0 || index >= slotItemIDs.Length) return;
+
+        slotItemIDs[index] = "";
+        if (slotIconImages[index] != null)
+        {
+            slotIconImages[index].sprite = null;
+            slotIconImages[index].gameObject.SetActive(false);
+        }
     }
 }
